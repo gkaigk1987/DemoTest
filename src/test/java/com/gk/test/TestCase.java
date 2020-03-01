@@ -5,15 +5,11 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.gk.model.*;
+import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
@@ -29,14 +25,6 @@ import com.gk.mapper.PlivateOrderMapper;
 import com.gk.mapper.PlivateRouteMapper;
 import com.gk.mapper.PositionGkMapper;
 import com.gk.mapper.TerminalMapper;
-import com.gk.model.PlivateOrder;
-import com.gk.model.PlivateOrderExample;
-import com.gk.model.PlivateRoute;
-import com.gk.model.PlivateRouteExample;
-import com.gk.model.PositionGk;
-import com.gk.model.PositionGkExample;
-import com.gk.model.Terminal;
-import com.gk.model.TerminalExample;
 import com.gk.util.AMapApi;
 import com.gk.util.DateUtil;
 import com.gk.util.ExcelUtil;
@@ -1154,5 +1142,47 @@ public class TestCase {
 		if(updateList.size() > 0) {
 			FileUtil.fileWrite(new File("E:/update_terminal.sql"), updateList);
 		}
+	}
+
+	@Test
+	public void test030() {
+		String str = "123456";
+		char[] chars = str.toCharArray();
+	}
+
+	/**
+	 * 使用Java 8 的集合 Stream 方式对国家奖牌榜进行排序
+	 * 具体规则看代码排序实现
+	 */
+	@Test
+	public void test031() {
+		List<CountryMedal> medalList = Lists.newArrayList();
+		CountryMedal usa = new CountryMedal("usa",10, 3, 1);
+		medalList.add(usa);
+		CountryMedal englang = new CountryMedal("englang",4, 5, 0);
+		medalList.add(englang);
+		CountryMedal gemeny = new CountryMedal("gemeny",5, 6, 1);
+		medalList.add(gemeny);
+		CountryMedal china = new CountryMedal("china",5, 6, 1);
+		medalList.add(china);
+		CountryMedal russia = new CountryMedal("russia",10, 6, 1);
+		medalList.add(russia);
+
+		List<CountryMedal> collect = medalList.stream().sorted(new Comparator<CountryMedal>() {
+			@Override
+			public int compare(CountryMedal o1, CountryMedal o2) {
+				return o1.getGoldNum() > o2.getGoldNum() ? -1 :
+						o1.getGoldNum() < o2.getGoldNum() ? 1 :
+								o1.getSilverNum() > o2.getSilverNum() ? -1 :
+										o1.getSilverNum() < o2.getSilverNum() ? 1 :
+												o1.getBronzeNum() > o2.getBronzeNum() ? -1 :
+														o1.getBronzeNum() < o2.getBronzeNum() ? 1 :
+																o1.getCountryName().compareTo(o2.getCountryName());
+			}
+		}).collect(Collectors.toList());
+		collect.stream().forEach(e -> {
+			System.out.println(e);
+		});
+
 	}
 }
